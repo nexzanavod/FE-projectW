@@ -81,13 +81,23 @@ const Campaigns: React.FC = () => {
     setSaving(true);
     try {
       if (editingCampaign) {
-        const result = await updateCampaign(editingCampaign.id, {
+        const updateData: any = {
           name: formData.name,
-          fixedReply: formData.fixedReply,
           replyType: formData.replyType,
-          replyImageUrl: formData.replyImageUrl,
           isActive: formData.isActive
-        });
+        };
+        
+        // Only include fixedReply for text campaigns
+        if (formData.replyType === 'text') {
+          updateData.fixedReply = formData.fixedReply;
+        }
+        
+        // Only include replyImageUrl for image campaigns
+        if (formData.replyType === 'image') {
+          updateData.replyImageUrl = formData.replyImageUrl;
+        }
+
+        const result = await updateCampaign(editingCampaign.id, updateData);
         if (result.success) {
           await fetchCampaigns();
           handleCloseModal();
@@ -95,14 +105,24 @@ const Campaigns: React.FC = () => {
           setError(result.message || 'Failed to update campaign');
         }
       } else {
-        const result = await createCampaign({
+        const createData: any = {
           userId: user.id,
           name: formData.name,
-          fixedReply: formData.fixedReply,
           replyType: formData.replyType,
-          replyImageUrl: formData.replyImageUrl,
           isActive: formData.isActive
-        });
+        };
+        
+        // Only include fixedReply for text campaigns
+        if (formData.replyType === 'text') {
+          createData.fixedReply = formData.fixedReply;
+        }
+        
+        // Only include replyImageUrl for image campaigns
+        if (formData.replyType === 'image') {
+          createData.replyImageUrl = formData.replyImageUrl;
+        }
+
+        const result = await createCampaign(createData);
         if (result.success) {
           await fetchCampaigns();
           handleCloseModal();
