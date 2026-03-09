@@ -84,17 +84,15 @@ const Campaigns: React.FC = () => {
         const updateData: any = {
           name: formData.name,
           replyType: formData.replyType,
-          isActive: formData.isActive
+          isActive: formData.isActive,
+          fixedReply: formData.fixedReply || ''
         };
         
-        // Only include fixedReply for text campaigns
-        if (formData.replyType === 'text') {
-          updateData.fixedReply = formData.fixedReply;
-        }
-        
-        // Only include replyImageUrl for image campaigns
+        // Include replyImageUrl for image campaigns, null for text
         if (formData.replyType === 'image') {
           updateData.replyImageUrl = formData.replyImageUrl;
+        } else {
+          updateData.replyImageUrl = null;
         }
 
         const result = await updateCampaign(editingCampaign.id, updateData);
@@ -109,17 +107,15 @@ const Campaigns: React.FC = () => {
           userId: user.id,
           name: formData.name,
           replyType: formData.replyType,
-          isActive: formData.isActive
+          isActive: formData.isActive,
+          fixedReply: formData.fixedReply || ''
         };
         
-        // Only include fixedReply for text campaigns
-        if (formData.replyType === 'text') {
-          createData.fixedReply = formData.fixedReply;
-        }
-        
-        // Only include replyImageUrl for image campaigns
+        // Include replyImageUrl for image campaigns, null for text
         if (formData.replyType === 'image') {
           createData.replyImageUrl = formData.replyImageUrl;
+        } else {
+          createData.replyImageUrl = null;
         }
 
         const result = await createCampaign(createData);
@@ -319,10 +315,18 @@ const Campaigns: React.FC = () => {
               
               <div className="campaign-body">
                 {campaign.replyType === 'image' && campaign.replyImageUrl ? (
-                  <div className="image-preview-card">
-                    <label>Campaign Image:</label>
-                    <img src={campaign.replyImageUrl} alt={campaign.name} />
-                  </div>
+                  <>
+                    <div className="image-preview-card">
+                      <label>Campaign Image:</label>
+                      <img src={campaign.replyImageUrl} alt={campaign.name} />
+                    </div>
+                    {campaign.fixedReply && (
+                      <div className="reply-preview">
+                        <label>Image Caption:</label>
+                        <p>{campaign.fixedReply}</p>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="reply-preview">
                     <label>Automated Reply:</label>
@@ -396,8 +400,7 @@ const Campaigns: React.FC = () => {
                 onChange={(e) => setFormData({ 
                   ...formData, 
                   replyType: e.target.value as 'text' | 'image',
-                  ...(e.target.value === 'text' && { replyImageUrl: '' }),
-                  ...(e.target.value === 'image' && { fixedReply: '' })
+                  ...(e.target.value === 'text' && { replyImageUrl: '' })
                 })}
                 className="form-select"
               >
@@ -430,51 +433,68 @@ const Campaigns: React.FC = () => {
 
             {/* Image Content */}
             {formData.replyType === 'image' && (
-              <div className="form-group">
-                <label htmlFor="imageUpload">Upload Image *</label>
-                <div 
-                  className={`image-upload-area ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
-                  {uploading ? (
-                    <div className="upload-loader">
-                      <div className="spinner"></div>
-                      <p>Uploading image...</p>
-                    </div>
-                  ) : formData.replyImageUrl ? (
-                    <div className="image-preview">
-                      <img src={formData.replyImageUrl} alt="Preview" />
-                      <button
-                        type="button"
-                        className="remove-image-btn"
-                        onClick={() => setFormData({ ...formData, replyImageUrl: '' })}
-                      >
-                        <MdClose /> Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="upload-prompt">
-                      <MdImage className="upload-icon" />
-                      <p>Click to select an image or drag and drop</p>
-                      <small>Supported formats: JPG, PNG, GIF</small>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    id="imageUpload"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="hidden-input"
-                    required={!formData.replyImageUrl}
-                  />
+              <>
+                <div className="form-group">
+                  <label htmlFor="imageUpload">Upload Image *</label>
+                  <div 
+                    className={`image-upload-area ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    {uploading ? (
+                      <div className="upload-loader">
+                        <div className="spinner"></div>
+                        <p>Uploading image...</p>
+                      </div>
+                    ) : formData.replyImageUrl ? (
+                      <div className="image-preview">
+                        <img src={formData.replyImageUrl} alt="Preview" />
+                        <button
+                          type="button"
+                          className="remove-image-btn"
+                          onClick={() => setFormData({ ...formData, replyImageUrl: '' })}
+                        >
+                          <MdClose /> Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="upload-prompt">
+                        <MdImage className="upload-icon" />
+                        <p>Click to select an image or drag and drop</p>
+                        <small>Supported formats: JPG, PNG, GIF</small>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden-input"
+                      required={!formData.replyImageUrl}
+                    />
+                  </div>
+                  <small className="form-help">
+                    Upload an image to send to customers when they message you
+                  </small>
                 </div>
-                <small className="form-help">
-                  Upload an image to send to customers when they message you
-                </small>
-              </div>
+
+                <div className="form-group">
+                  <label htmlFor="imageCaption">Image Caption (Optional)</label>
+                  <textarea
+                    id="imageCaption"
+                    value={formData.fixedReply}
+                    onChange={(e) => setFormData({ ...formData, fixedReply: e.target.value })}
+                    placeholder="Add a caption to accompany your image (e.g., Check out our menu!)..."
+                    className="form-textarea"
+                    rows={3}
+                  />
+                  <small className="form-help">
+                    This text will be sent along with the image
+                  </small>
+                </div>
+              </>
             )}              <div className="form-group">
                 <label htmlFor="campaignStatus">Status</label>
                 <select
