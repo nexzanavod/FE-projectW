@@ -7,6 +7,7 @@ import {
   MdMessage, 
   MdPeople, 
   MdBuild,
+  MdSmartToy,
   MdChevronLeft,
   MdChevronRight,
   MdLogout
@@ -52,6 +53,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       label: 'Messages',
       icon: MdMessage,
       path: '/messages'
+    },
+    {
+      id: 'ai-agents',
+      label: 'AI Agents',
+      icon: MdSmartToy,
+      path: '/ai-agents'
     },
     {
       id: 'users',

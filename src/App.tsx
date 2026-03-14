@@ -6,6 +6,7 @@ import DashboardHome from './components/dashboard/DashboardHome';
 import WhatsAppSettings from './components/pages/WhatsAppSettings';
 import Campaigns from './components/pages/Campaigns';
 import Messages from './components/pages/Messages';
+import AiAgents from './components/pages/AiAgents';
 import Users from './components/pages/Users';
 import Settings from './components/pages/Settings';
 import Login from './components/pages/Login';
@@ -14,6 +15,7 @@ import './styles/dashboard-home.css';
 import './styles/whatsapp-settings.css';
 import './styles/campaigns.css';
 import './styles/messages.css';
+import './styles/ai-agents.css';
 import './styles/users.css';
 import './styles/settings.css';
 import './styles/login.css';
@@ -39,6 +41,7 @@ function App() {
                     <Route path="/api-credentials" element={<WhatsAppSettings />} />
                     <Route path="/campaigns" element={<Campaigns />} />
                     <Route path="/messages" element={<Messages />} />
+                    <Route path="/ai-agents" element={<AiAgents />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/settings" element={<Settings />} />
                   </Routes>

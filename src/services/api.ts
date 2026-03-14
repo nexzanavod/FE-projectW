@@ -9,6 +9,7 @@ import type {
   Campaign,
   Message,
   FileUpload,
+  AiAgent,
   LoginRequest,
   CreateUserRequest,
   UpdateUserRequest,
@@ -19,6 +20,8 @@ import type {
   UpdateCampaignRequest,
   CreateMessageRequest,
   UploadFileRequest,
+  CreateAiAgentRequest,
+  UpdateAiAgentRequest,
 } from '../types/api.types';
 
 // Generic fetch wrapper with error handling
@@ -250,5 +253,35 @@ export async function uploadFile(data: UploadFileRequest): Promise<ApiResponse<F
   return apiRequest<FileUpload>('/api/uploads', {
     method: 'POST',
     body: JSON.stringify(data),
+  });
+}
+
+// ============================================
+// AI Agents API
+// ============================================
+
+export async function getAiAgentsByUserId(userId: string): Promise<ApiResponse<AiAgent[]>> {
+  return apiRequest<AiAgent[]>(API_ENDPOINTS.aiAgents.getByUserId(userId), {
+    method: 'GET',
+  });
+}
+
+export async function createAiAgent(data: CreateAiAgentRequest): Promise<ApiResponse<AiAgent>> {
+  return apiRequest<AiAgent>(API_ENDPOINTS.aiAgents.create, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateAiAgent(id: string, data: UpdateAiAgentRequest): Promise<ApiResponse<AiAgent>> {
+  return apiRequest<AiAgent>(API_ENDPOINTS.aiAgents.update(id), {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAiAgent(id: string): Promise<ApiResponse<void>> {
+  return apiRequest<void>(API_ENDPOINTS.aiAgents.delete(id), {
+    method: 'DELETE',
   });
 }

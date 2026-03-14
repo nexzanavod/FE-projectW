@@ -175,6 +175,33 @@ export interface CreateMessageRequest {
   replyStatus?: string;
 }
 
+// AI Agent types
+export interface AiAgent {
+  id: string;
+  userId: string;
+  name: string;
+  agentTitle: string;
+  instructions: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateAiAgentRequest {
+  userId: string;
+  name: string;
+  agentTitle: string;
+  instructions: string;
+  isActive?: boolean;
+}
+
+export interface UpdateAiAgentRequest {
+  name?: string;
+  agentTitle?: string;
+  instructions?: string;
+  isActive?: boolean;
+}
+
 // Update user request
 export interface UpdateUserRequest {
   email?: string;

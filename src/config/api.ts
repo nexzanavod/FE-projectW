@@ -50,4 +50,13 @@ export const API_ENDPOINTS = {
     getById: (id: string) => `/api/messages/${id}`,
     delete: (id: string) => `/api/messages/${id}`,
   },
+
+  // AI Agents
+  aiAgents: {
+    create: '/api/ai-agents',
+    getByUserId: (userId: string) => `/api/ai-agents/user/${userId}`,
+    getById: (id: string) => `/api/ai-agents/${id}`,
+    update: (id: string) => `/api/ai-agents/${id}`,
+    delete: (id: string) => `/api/ai-agents/${id}`,
+  },
 } as const;
