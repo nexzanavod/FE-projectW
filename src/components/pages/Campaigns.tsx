@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   MdAdd, 
   MdEdit, 
@@ -41,6 +41,7 @@ const Campaigns: React.FC = () => {
   // AI agent search
   const [agentSearch, setAgentSearch] = useState('');
   const [showAgentDropdown, setShowAgentDropdown] = useState(false);
+  const agentDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -48,6 +49,19 @@ const Campaigns: React.FC = () => {
       fetchAiAgents();
     }
   }, [user]);
+
+  // Close agent dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (agentDropdownRef.current && !agentDropdownRef.current.contains(e.target as Node)) {
+        setShowAgentDropdown(false);
+      }
+    };
+    if (showAgentDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showAgentDropdown]);
 
   const fetchCampaigns = async () => {
     if (!user) return;
@@ -113,7 +127,7 @@ const Campaigns: React.FC = () => {
 
   const handleSelectAgent = (agent: AiAgent) => {
     setFormData(prev => ({ ...prev, aiAgentId: agent.id }));
-    setAgentSearch(agent.name);
+    setAgentSearch('');
     setShowAgentDropdown(false);
   };
 
@@ -421,9 +435,9 @@ const Campaigns: React.FC = () => {
                   })}
                   className="form-select"
                 >
-                  <option value="text">💬 Text Message</option>
-                  <option value="image">🖼️ Image</option>
-                  <option value="ai">🤖 AI Agent</option>
+                  <option value="text">Text Message</option>
+                  <option value="image">Image</option>
+                  <option value="ai">AI Agent</option>
                 </select>
               </div>
 
@@ -501,31 +515,50 @@ const Campaigns: React.FC = () => {
                         <p>No AI agents found. <a href="/ai-agents" onClick={handleCloseModal}>Create one first</a></p>
                       </div>
                     ) : (
-                      <div className="agent-search-wrapper">
-                        <div className="agent-search-input-wrap">
-                          <MdSearch className="search-icon-inside" />
-                          <input
-                            type="text"
-                            className="form-input agent-search-input"
-                            placeholder="Search agents by name or title..."
-                            value={agentSearch}
-                            onChange={(e) => { setAgentSearch(e.target.value); setShowAgentDropdown(true); setFormData(prev => ({ ...prev, aiAgentId: '' })); }}
-                            onFocus={() => setShowAgentDropdown(true)}
-                          />
-                          {formData.aiAgentId && (
-                            <button type="button" className="clear-agent-btn" onClick={() => { setFormData(prev => ({ ...prev, aiAgentId: '' })); setAgentSearch(''); }}>
-                              <MdClose />
-                            </button>
+                      <div className="agent-search-wrapper" ref={agentDropdownRef}>
+                        {/* Trigger button — shows selected agent or placeholder */}
+                        <div
+                          className={`agent-select-trigger ${showAgentDropdown ? 'open' : ''}`}
+                          onClick={() => { setShowAgentDropdown(prev => !prev); }}
+                        >
+                          {formData.aiAgentId ? (
+                            <>
+                              <div className="agent-dropdown-avatar"><MdSmartToy /></div>
+                              <div className="agent-dropdown-info">
+                                <span className="agent-dropdown-name">{getAgentById(formData.aiAgentId)?.name}</span>
+                                <span className="agent-dropdown-title">{getAgentById(formData.aiAgentId)?.agentTitle}</span>
+                              </div>
+                              <button type="button" className="clear-agent-btn" onClick={(e) => { e.stopPropagation(); setFormData(prev => ({ ...prev, aiAgentId: '' })); setAgentSearch(''); }}>
+                                <MdClose />
+                              </button>
+                            </>
+                          ) : (
+                            <span className="agent-select-placeholder">Select an AI agent...</span>
                           )}
+                          <span className="agent-select-chevron">{showAgentDropdown ? '▲' : '▼'}</span>
                         </div>
 
-                        {showAgentDropdown && agentSearch && !formData.aiAgentId && (
+                        {/* Dropdown panel */}
+                        {showAgentDropdown && (
                           <div className="agent-dropdown">
+                            {/* Search inside dropdown */}
+                            <div className="agent-dropdown-search">
+                              <MdSearch className="search-icon-inside" />
+                              <input
+                                type="text"
+                                autoFocus
+                                className="agent-dropdown-search-input"
+                                placeholder="Search agents..."
+                                value={agentSearch}
+                                onChange={(e) => setAgentSearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
                             {filteredAgents.length === 0 ? (
                               <div className="agent-dropdown-empty">No agents match your search</div>
                             ) : (
                               filteredAgents.map(agent => (
-                                <div key={agent.id} className="agent-dropdown-item" onClick={() => handleSelectAgent(agent)}>
+                                <div key={agent.id} className={`agent-dropdown-item ${formData.aiAgentId === agent.id ? 'selected' : ''}`} onClick={() => handleSelectAgent(agent)}>
                                   <div className="agent-dropdown-avatar"><MdSmartToy /></div>
                                   <div className="agent-dropdown-info">
                                     <span className="agent-dropdown-name">{agent.name}</span>
@@ -537,17 +570,6 @@ const Campaigns: React.FC = () => {
                                 </div>
                               ))
                             )}
-                          </div>
-                        )}
-
-                        {formData.aiAgentId && (
-                          <div className="selected-agent-card">
-                            <div className="agent-dropdown-avatar"><MdSmartToy /></div>
-                            <div className="agent-dropdown-info">
-                              <span className="agent-dropdown-name">{getAgentById(formData.aiAgentId)?.name}</span>
-                              <span className="agent-dropdown-title">{getAgentById(formData.aiAgentId)?.agentTitle}</span>
-                            </div>
-                            <span className="selected-check">✓ Selected</span>
                           </div>
                         )}
                       </div>
