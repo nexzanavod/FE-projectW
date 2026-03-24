@@ -497,7 +497,7 @@ const AiAgents: React.FC = () => {
                 {integrationTabs.filter(t => t.key === activeIntegrationTab).map(tab => (
                   <div key={tab.key} className="integration-input-section">
                     <div className="integration-platform-header">
-                      <span className="integration-platform-icon" style={{ background: `${tab.color}18`, color: tab.color }}>
+                      <span className="integration-platform-icon" style={{ background: `${tab.color}15`, color: tab.color, borderColor: `${tab.color}30` }}>
                         {tab.icon}
                       </span>
                       <div>
@@ -513,6 +513,7 @@ const AiAgents: React.FC = () => {
                         placeholder={tab.placeholder}
                         value={integrationData[tab.key]}
                         onChange={e => setIntegrationData(prev => ({ ...prev, [tab.key]: e.target.value }))}
+                        style={{ borderColor: integrationData[tab.key] ? tab.color : '' }}
                       />
                       {integrationData[tab.key] && (
                         <button
@@ -531,8 +532,9 @@ const AiAgents: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="integration-preview-link"
+                        style={{ color: tab.color, backgroundColor: `${tab.color}10` }}
                       >
-                        <MdLink /> Preview link ↗
+                        <MdLink /> Preview {tab.label} Link ↗
                       </a>
                     )}
                   </div>
@@ -540,20 +542,21 @@ const AiAgents: React.FC = () => {
 
                 {/* Summary of set links */}
                 <div className="integration-summary">
-                  {integrationTabs.map(tab => (
-                    <div key={tab.key} className={`integration-summary-item ${integrationData[tab.key] ? 'set' : 'empty'}`}>
-                      <span style={{ color: integrationData[tab.key] ? tab.color : undefined }}>{tab.icon}</span>
-                      <span className="integration-summary-label">{tab.label}</span>
-                      <span className="integration-summary-status">
-                        {integrationData[tab.key] ? '✓ Set' : 'Not set'}
-                      </span>
-                    </div>
-                  ))}
+                  <span className="integration-summary-title">Status:</span>
+                  {integrationTabs.map(tab => {
+                    const isSet = !!integrationData[tab.key];
+                    return (
+                      <div key={tab.key} className={`integration-summary-badge ${isSet ? 'set' : 'empty'}`}>
+                        {isSet ? <MdCheckCircle style={{ color: '#16a34a' }} /> : <span style={{ color: 'var(--text-secondary)' }}>{tab.icon}</span>}
+                        <span>{tab.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             )}
 
-            <div className="modal-footer">
+            <div className="modal-footer" style={{ marginTop: '1rem' }}>
               <button
                 className="btn danger-outline"
                 onClick={handleDeleteIntegrations}
