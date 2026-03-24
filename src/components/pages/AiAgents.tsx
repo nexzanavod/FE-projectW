@@ -540,19 +540,6 @@ const AiAgents: React.FC = () => {
                   </div>
                 ))}
 
-                {/* Summary of set links */}
-                <div className="integration-summary">
-                  <span className="integration-summary-title">Status:</span>
-                  {integrationTabs.map(tab => {
-                    const isSet = !!integrationData[tab.key];
-                    return (
-                      <div key={tab.key} className={`integration-summary-badge ${isSet ? 'set' : 'empty'}`}>
-                        {isSet ? <MdCheckCircle style={{ color: '#16a34a' }} /> : <span style={{ color: 'var(--text-secondary)' }}>{tab.icon}</span>}
-                        <span>{tab.label}</span>
-                      </div>
-                    );
-                  })}
-                </div>
               </>
             )}
 

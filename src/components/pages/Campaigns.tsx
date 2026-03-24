@@ -86,10 +86,17 @@ const Campaigns: React.FC = () => {
 
   const getAgentById = (id: string) => aiAgents.find(a => a.id === id);
 
-  const filteredAgents = aiAgents.filter(a =>
-    a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
-    a.agentTitle.toLowerCase().includes(agentSearch.toLowerCase())
-  );
+  const filteredAgents = aiAgents
+    .filter(a =>
+      a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
+      a.agentTitle.toLowerCase().includes(agentSearch.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Active agents first
+      if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+      // Then by newest created time
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
   const handleOpenModal = (campaign?: Campaign) => {
     if (campaign) {
