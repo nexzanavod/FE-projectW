@@ -424,6 +424,22 @@ const AiAgents: React.FC = () => {
               </div>
             </div>
             <div className="modal-footer">
+              {editingAgent && (
+                <button 
+                  className="btn secondary" 
+                  style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                  type="button"
+                  onClick={() => {
+                    const agent = editingAgent;
+                    handleCloseModal();
+                    if (agent) handleOpenIntegrations(agent);
+                  }}
+                  disabled={saving}
+                >
+                  <MdLink />
+                  Meeting Integrations
+                </button>
+              )}
               <button className="btn secondary" onClick={handleCloseModal} disabled={saving}>Cancel</button>
               <button className="btn primary" onClick={handleSave} disabled={!isFormValid || saving}>
                 <MdSave />
