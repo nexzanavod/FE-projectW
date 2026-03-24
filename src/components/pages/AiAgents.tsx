@@ -57,7 +57,12 @@ const AiAgents: React.FC = () => {
     setError(null);
     const result = await getAiAgentsByUserId(user.id);
     if (result.success && result.data) {
-      setAgents(result.data);
+      setAgents(
+        [...result.data].sort((a, b) => {
+          if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+      );
     } else {
       setError(result.message || 'Failed to fetch AI agents');
     }
@@ -152,9 +157,9 @@ const AiAgents: React.FC = () => {
     const result = await getAiIntegrations(agent.id);
     if (result.success && result.data) {
       setIntegrationData({
-        zoom:    result.data.zoom    || '',
+        zoom: result.data.zoom || '',
         hubspot: result.data.hubspot || '',
-        google:  result.data.google  || '',
+        google: result.data.google || '',
       });
     }
     setIntegrationLoading(false);
@@ -169,9 +174,9 @@ const AiAgents: React.FC = () => {
     if (!integrationAgent) return;
     setIntegrationSaving(true);
     const payload: { zoom?: string | null; hubspot?: string | null; google?: string | null } = {
-      zoom:    integrationData.zoom    || null,
+      zoom: integrationData.zoom || null,
       hubspot: integrationData.hubspot || null,
-      google:  integrationData.google  || null,
+      google: integrationData.google || null,
     };
     const result = await setAiIntegrations(integrationAgent.id, payload);
     if (!result.success) {
@@ -200,28 +205,28 @@ const AiAgents: React.FC = () => {
     placeholder: string;
     color: string;
   }[] = [
-    {
-      key: 'zoom',
-      label: 'Zoom',
-      icon: <MdVideoCall />,
-      placeholder: 'https://zoom.us/j/...',
-      color: '#2D8CFF',
-    },
-    {
-      key: 'hubspot',
-      label: 'HubSpot',
-      icon: <SiHubspot />,
-      placeholder: 'https://meetings.hubspot.com/...',
-      color: '#FF7A59',
-    },
-    {
-      key: 'google',
-      label: 'Google Meet',
-      icon: <MdCalendarMonth />,
-      placeholder: 'https://calendar.google.com/...',
-      color: '#1A73E8',
-    },
-  ];
+      {
+        key: 'zoom',
+        label: 'Zoom',
+        icon: <MdVideoCall />,
+        placeholder: 'https://zoom.us/j/...',
+        color: '#2D8CFF',
+      },
+      {
+        key: 'hubspot',
+        label: 'HubSpot',
+        icon: <SiHubspot />,
+        placeholder: 'https://meetings.hubspot.com/...',
+        color: '#FF7A59',
+      },
+      {
+        key: 'google',
+        label: 'Google Meet',
+        icon: <MdCalendarMonth />,
+        placeholder: 'https://calendar.google.com/...',
+        color: '#1A73E8',
+      },
+    ];
 
   return (
     <div className="ai-agents-page">
@@ -342,22 +347,6 @@ const AiAgents: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="agent-card-footer">
-                <button
-                  className="integration-footer-btn"
-                  onClick={() => handleOpenIntegrations(agent)}
-                >
-                  <MdLink />
-                  Integrations
-                </button>
-                <button
-                  className={`toggle-btn ${agent.isActive ? 'active' : 'inactive'}`}
-                  onClick={() => handleToggleStatus(agent)}
-                >
-                  {agent.isActive ? 'Deactivate' : 'Activate'}
-                </button>
-              </div>
             </div>
           ))
         )}
@@ -412,8 +401,8 @@ const AiAgents: React.FC = () => {
               {editingAgent && (
                 <div className="form-group">
                   <label>Integrations</label>
-                  <button 
-                    className="btn secondary" 
+                  <button
+                    className="btn secondary"
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', width: '100%' }}
                     type="button"
                     onClick={() => {
@@ -439,7 +428,7 @@ const AiAgents: React.FC = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
-                <small className="form-help">⚠️ Only one agent should be active at a time for best results.</small>
+                <small className="form-help">Set the agent as active to make it available for campaigns.</small>
               </div>
             </div>
             <div className="modal-footer">

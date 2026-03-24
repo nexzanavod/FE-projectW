@@ -241,16 +241,6 @@
   font-weight: 500;
 }
 
-/* Card Footer */
-.agent-card-footer {
-  padding: 0.875rem 1.25rem;
-  border-top: 1px solid var(--border-light);
-  background-color: var(--bg-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 /* Toggle Button */
 .toggle-btn {
   padding: 0.4rem 1rem;
@@ -529,7 +519,8 @@
 .integration-input-wrap input:focus {
   background-color: var(--bg-primary);
   border-color: var(--tab-color);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); /* Soft fallback shadow; browser focus ring may apply */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+  /* Soft fallback shadow; browser focus ring may apply */
   outline: none;
 }
 

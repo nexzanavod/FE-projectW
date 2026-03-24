@@ -69,7 +69,12 @@ const Campaigns: React.FC = () => {
     setError(null);
     const result = await getCampaignsByUserId(user.id);
     if (result.success && result.data) {
-      setCampaigns(result.data);
+      setCampaigns(
+        [...result.data].sort((a, b) => {
+          if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+      );
     } else {
       setError(result.message || 'Failed to fetch campaigns');
     }
@@ -88,15 +93,12 @@ const Campaigns: React.FC = () => {
 
   const filteredAgents = aiAgents
     .filter(a =>
-      a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
-      a.agentTitle.toLowerCase().includes(agentSearch.toLowerCase())
+      a.isActive && (
+        a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
+        a.agentTitle.toLowerCase().includes(agentSearch.toLowerCase())
+      )
     )
-    .sort((a, b) => {
-      // Active agents first
-      if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
-      // Then by newest created time
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const handleOpenModal = (campaign?: Campaign) => {
     if (campaign) {
