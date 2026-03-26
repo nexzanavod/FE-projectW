@@ -8,6 +8,7 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 120px); /* Fill available viewport height minus header/padding */
   gap: 0;
 }
 
@@ -221,8 +222,9 @@
   border-radius: 12px;
   overflow: hidden;
   background: var(--bg-primary);
-  min-height: 620px;
-  max-height: calc(100vh - 320px);
+  flex: 1; /* Grow to fill messages-page height */
+  min-height: 0; /* Allow shrinking below content size if needed */
+  margin-bottom: 0.5rem;
 }
 
 /* ── Thread List Pane ────────────────────────────────────── */
@@ -791,15 +793,15 @@
   .thread-list-pane {
     border-right: none;
     border-bottom: 1px solid var(--border-light);
-    min-height: 400px;
-    max-height: 50vh;
+    min-height: 0;
+    flex: 1;
   }
 
   .thread-list-pane.hide-mobile { display: none; }
 
   .chat-pane {
-    min-height: 400px;
-    max-height: 60vh;
+    min-height: 0;
+    flex: 1;
   }
 
   .back-btn { display: flex; }
