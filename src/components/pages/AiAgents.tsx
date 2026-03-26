@@ -10,7 +10,6 @@ import {
   MdCheckCircle,
   MdPauseCircle,
   MdLink,
-  MdLinkOff,
   MdVideoCall,
   MdCalendarMonth,
 } from 'react-icons/md';
