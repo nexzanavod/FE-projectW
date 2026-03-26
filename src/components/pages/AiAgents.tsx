@@ -294,31 +294,38 @@ const AiAgents: React.FC = () => {
         ) : (
           agents.map(agent => (
             <div key={agent.id} className="agent-card">
+              <div className="agent-actions">
+                <button
+                  className="icon-btn integration"
+                  onClick={() => handleOpenIntegrations(agent)}
+                  title="Meeting integrations"
+                >
+                  <MdLink />
+                </button>
+                <button className="icon-btn" onClick={() => handleOpenModal(agent)} title="Edit agent">
+                  <MdEdit />
+                </button>
+                <button className="icon-btn danger" onClick={() => handleDelete(agent.id)} title="Delete agent">
+                  <MdDelete />
+                </button>
+              </div>
+
               <div className="agent-card-header">
                 <div className="agent-identity">
                   <div className="agent-avatar"><MdSmartToy /></div>
                   <div className="agent-title-group">
                     <h3>{agent.name}</h3>
-                    <span className="agent-role">{agent.agentTitle}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <span className="agent-role">{agent.agentTitle}</span>
+                      <span className={`status-badge ${agent.isActive ? 'active' : 'inactive'}`}>
+                        {agent.isActive ? (
+                          <><MdCheckCircle size={12} /> Active</>
+                        ) : (
+                          <><MdPauseCircle size={12} /> Inactive</>
+                        )}
+                      </span>
+                    </div>
                   </div>
-                  <span className={`status-badge ${agent.isActive ? 'active' : 'inactive'}`}>
-                    {agent.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-                <div className="agent-actions">
-                  <button
-                    className="icon-btn integration"
-                    onClick={() => handleOpenIntegrations(agent)}
-                    title="Meeting integrations"
-                  >
-                    <MdLink />
-                  </button>
-                  <button className="icon-btn" onClick={() => handleOpenModal(agent)} title="Edit agent">
-                    <MdEdit />
-                  </button>
-                  <button className="icon-btn danger" onClick={() => handleDelete(agent.id)} title="Delete agent">
-                    <MdDelete />
-                  </button>
                 </div>
               </div>
 
@@ -329,12 +336,12 @@ const AiAgents: React.FC = () => {
                 </div>
                 <div className="agent-meta">
                   <div className="meta-item">
-                    <span className="meta-label">Created:</span>
-                    <span className="meta-value">{new Date(agent.createdAt).toLocaleDateString()}</span>
+                    <span className="meta-label">Created</span>
+                    <span className="meta-value">{new Date(agent.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
-                  <div className="meta-item">
-                    <span className="meta-label">Last Updated:</span>
-                    <span className="meta-value">{new Date(agent.updatedAt).toLocaleDateString()}</span>
+                  <div className="meta-item" style={{ textAlign: 'right' }}>
+                    <span className="meta-label">Last Activity</span>
+                    <span className="meta-value">{new Date(agent.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                   </div>
                 </div>
               </div>
