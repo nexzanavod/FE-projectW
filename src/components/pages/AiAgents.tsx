@@ -38,10 +38,11 @@ const AiAgents: React.FC = () => {
 
   // ── Integration modal ────────────────────────────────────
   const [integrationAgent, setIntegrationAgent] = useState<AiAgent | null>(null);
-  const [integrationData, setIntegrationData] = useState<{ zoom: string; hubspot: string; google: string }>({
+  const [integrationData, setIntegrationData] = useState<{ zoom: string; hubspot: string; google: string; useCustomerName: boolean }>({
     zoom: '',
     hubspot: '',
     google: '',
+    useCustomerName: false,
   });
   const [integrationLoading, setIntegrationLoading] = useState(false);
   const [integrationSaving, setIntegrationSaving] = useState(false);
@@ -143,7 +144,7 @@ const AiAgents: React.FC = () => {
   const handleOpenIntegrations = async (agent: AiAgent) => {
     setIntegrationAgent(agent);
     setActiveIntegrationTab('zoom');
-    setIntegrationData({ zoom: '', hubspot: '', google: '' });
+    setIntegrationData({ zoom: '', hubspot: '', google: '', useCustomerName: false });
     setIntegrationLoading(true);
     const result = await getAiIntegrations(agent.id);
     if (result.success && result.data) {
@@ -151,6 +152,7 @@ const AiAgents: React.FC = () => {
         zoom: result.data.zoom || '',
         hubspot: result.data.hubspot || '',
         google: result.data.google || '',
+        useCustomerName: result.data.useCustomerName ?? false,
       });
     }
     setIntegrationLoading(false);
@@ -158,16 +160,17 @@ const AiAgents: React.FC = () => {
 
   const handleCloseIntegrations = () => {
     setIntegrationAgent(null);
-    setIntegrationData({ zoom: '', hubspot: '', google: '' });
+    setIntegrationData({ zoom: '', hubspot: '', google: '', useCustomerName: false });
   };
 
   const handleSaveIntegrations = async () => {
     if (!integrationAgent) return;
     setIntegrationSaving(true);
-    const payload: { zoom?: string | null; hubspot?: string | null; google?: string | null } = {
+    const payload: { zoom?: string | null; hubspot?: string | null; google?: string | null; useCustomerName?: boolean } = {
       zoom: integrationData.zoom || null,
       hubspot: integrationData.hubspot || null,
       google: integrationData.google || null,
+      useCustomerName: integrationData.useCustomerName,
     };
     const result = await setAiIntegrations(integrationAgent.id, payload);
     if (!result.success) {
@@ -526,6 +529,22 @@ const AiAgents: React.FC = () => {
                     )}
                   </div>
                 ))}
+
+                {/* Use Customer Name toggle */}
+                <div className="integration-toggle-section">
+                  <div className="integration-toggle-info">
+                    <h4>Use Customer Name</h4>
+                    <p>Say Hi using the customer's WhatsApp profile name when starting a conversation.</p>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={integrationData.useCustomerName}
+                      onChange={e => setIntegrationData(prev => ({ ...prev, useCustomerName: e.target.checked }))}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
 
               </>
             )}

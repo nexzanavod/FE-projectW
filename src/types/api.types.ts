@@ -229,12 +229,14 @@ export interface AiIntegration {
   zoom: string | null;
   hubspot: string | null;
   google: string | null;
+  useCustomerName: boolean;
 }
 
 export interface SetAiIntegrationRequest {
   zoom?: string | null;
   hubspot?: string | null;
   google?: string | null;
+  useCustomerName?: boolean;
 }
 
 // Update user request
