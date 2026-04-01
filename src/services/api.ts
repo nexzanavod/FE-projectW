@@ -214,6 +214,12 @@ export async function deleteCampaign(id: string): Promise<ApiResponse<Campaign>>
   });
 }
 
+export async function cleanCampaign(id: string): Promise<ApiResponse<Campaign>> {
+  return apiRequest<Campaign>(API_ENDPOINTS.campaigns.clean(id), {
+    method: 'DELETE',
+  });
+}
+
 // ============================================
 // Messages API
 // ============================================

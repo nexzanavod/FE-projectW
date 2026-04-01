@@ -11,8 +11,9 @@ import {
   MdSmartToy,
   MdClose,
   MdSearch,
+  MdCleaningServices,
 } from 'react-icons/md';
-import { getCampaignsByUserId, createCampaign, updateCampaign, deleteCampaign, uploadFile, getAiAgentsByUserId } from '../../services/api';
+import { getCampaignsByUserId, createCampaign, updateCampaign, deleteCampaign, cleanCampaign, uploadFile, getAiAgentsByUserId } from '../../services/api';
 import { compressImageWithTinyPNG, validateImageFile } from '../../services/imageCompression';
 import { useAuth } from '../../context/AuthContext';
 import type { Campaign, AiAgent } from '../../types/api.types';
@@ -226,6 +227,13 @@ const Campaigns: React.FC = () => {
     else setError(result.message || 'Failed to delete campaign');
   };
 
+  const handleCleanCampaign = async (id: string) => {
+    if (!window.confirm('Are you sure you want to clean this campaign? This will delete all messages and reset the message count.')) return;
+    const result = await cleanCampaign(id);
+    if (result.success) await fetchCampaigns();
+    else setError(result.message || 'Failed to clean campaign');
+  };
+
   const handleToggleStatus = async (campaign: Campaign) => {
     const result = await updateCampaign(campaign.id, { isActive: !campaign.isActive });
     if (result.success) await fetchCampaigns();
@@ -342,6 +350,7 @@ const Campaigns: React.FC = () => {
                 </div>
                 <div className="campaign-actions">
                   <button className="icon-btn" onClick={() => handleOpenModal(campaign)} title="Edit campaign"><MdEdit /></button>
+                  <button className="icon-btn warning" onClick={() => handleCleanCampaign(campaign.id)} title="Clean campaign (delete all messages)"><MdCleaningServices /></button>
                   <button className="icon-btn danger" onClick={() => handleDeleteCampaign(campaign.id)} title="Delete campaign"><MdDelete /></button>
                 </div>
               </div>

@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
     getById: (id: string) => `/api/campaigns/${id}`,
     update: (id: string) => `/api/campaigns/${id}`,
     delete: (id: string) => `/api/campaigns/${id}`,
+    clean: (id: string) => `/api/campaigns/${id}/clean`,
   },
 
   // Messages
